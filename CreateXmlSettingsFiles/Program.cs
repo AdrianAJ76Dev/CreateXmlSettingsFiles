@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -12,6 +13,9 @@ namespace CreateXmlSettingsFiles
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Documents Folder {0}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            Console.ReadLine();
+
             CreateSSLSettings();
         }
 
@@ -28,7 +32,7 @@ namespace CreateXmlSettingsFiles
                         ),
 
                     new XElement("Dev_Machine",
-                        new XAttribute("Machine_Name", "PZ00GS3"),
+                        new XAttribute("Machine_Name", "PF00ZJG5"),
                         new XElement("TemplatePath", @"C:\Users\ajones\Documents\Automation\Code\Word\SSL Work\"),
                         new XElement("DocumentPath", @"C:\Users\ajones\Documents\Automation\Code\Word\SSL Work\"),
                         new XElement("Path", @"C:\Users\ajones\Documents\Automation\Code\Word\SSL Work\"),
@@ -46,7 +50,7 @@ namespace CreateXmlSettingsFiles
             string settingsfilepath = string.Empty;
             foreach (XElement el in SSLSettings.Elements("Dev_Machine"))
             {
-                Console.WriteLine("Current Machine Name is {0}", el.Attribute("Machine_Name").Value);
+                Console.WriteLine("Looking at Machine: {0}", el.Attribute("Machine_Name").Value);
                 if (el.Attribute("Machine_Name").Value.ToLower() == Environment.MachineName.ToLower())
                 {
                     settingsfilepath = el.Element("XmlPath").Value + SSLSettings.Element("Xmlfilename").Value;
@@ -56,11 +60,12 @@ namespace CreateXmlSettingsFiles
 
             // Using Linq
             Console.WriteLine("{0}", Environment.MachineName.ToString());
-            var dev_machine = (from el in SSLSettings.Elements("Dev_Machine")
+            var dev_machine = from el in SSLSettings.Elements("Dev_Machine")
                                                 where el.Attribute("Machine_Name").Value == Environment.MachineName.ToString()
-                                                select el).Single();
+                                                select el;
 
-            SSLSettings.Save(dev_machine.Element("DocumentPath").Value + dev_machine.Element("DocumentName"));
+
+            //SSLSettings.Save(dev_machine.Element("DocumentPath").Value + dev_machine.Element("DocumentName"));
 
             Console.WriteLine("Saved Xml file");
             Console.Read();
