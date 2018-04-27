@@ -55,32 +55,20 @@ namespace CreateXmlSettingsFiles
         static void GetSettings()
         {
             string settingsfilepath = string.Empty;
-            XDocument SSLSettings=XDocument.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS,LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
-            Console.WriteLine("Xml file Settings_SSL {0}", SSLSettings.ToString());
-            Console.WriteLine("Element Count {0}",SSLSettings.Descendants().Count());
-            Console.WriteLine("Desendants - 'Dev_Machine' Count {0}",SSLSettings.Descendants("Dev_Machine").Count());
-            Console.WriteLine("Desendants Nodes Count {0}",SSLSettings.DescendantNodes().Count());
-            Console.ReadLine();
-
-            foreach (var item in SSLSettings.Descendants())
-            {
-                Console.WriteLine("Elements {0}", item.ToString());
-            }
-            Console.ReadLine();
-            
+            XElement SSLSettings = XElement.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS,LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
             // Using Linq
             Console.WriteLine("{0}", Environment.MachineName.ToString());
-            var dev_machine = from el in SSLSettings.Descendants("Dev_Machine")
+            var dev_machine = from el in SSLSettings.Elements("Dev_Machine")
                               where el.Attribute("Machine_Name").Value == Environment.MachineName.ToString()
                               select el;
 
-            foreach (XElement el in SSLSettings.Descendants("Dev_Machine"))
+            foreach (XElement el in SSLSettings.Elements("Dev_Machine"))
             {
                 Console.WriteLine("Looking at Machine: {0}", el.Attribute("Machine_Name").Value);
                 if (el.Attribute("Machine_Name").Value.ToLower() == Environment.MachineName.ToLower())
                 {
-                    settingsfilepath = el.Value;
-                    Console.WriteLine("This Element Value is {0}", el.Value);
+                    settingsfilepath = el.Element("XmlPath").Value;
+                    Console.WriteLine("This Element Value is {0}", settingsfilepath);
                 }
             }
 
