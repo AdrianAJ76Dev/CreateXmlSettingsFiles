@@ -55,12 +55,9 @@ namespace CreateXmlSettingsFiles
         static void GetSettings()
         {
             string settingsfilepath = string.Empty;
-            XElement SSLSettings = XElement.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS);
-            // Using Linq
-            Console.WriteLine("{0}", Environment.MachineName.ToString());
-            var dev_machine = from el in SSLSettings.Elements("Dev_Machine")
-                              where el.Attribute("Machine_Name").Value == Environment.MachineName.ToString()
-                              select el;
+            XElement SSLSettings = 
+                XElement.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + 
+                Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS);
 
             foreach (XElement el in SSLSettings.Elements("Dev_Machine"))
             {
