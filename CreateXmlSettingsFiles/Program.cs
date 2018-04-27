@@ -11,12 +11,15 @@ namespace CreateXmlSettingsFiles
 {
     class Program
     {
+        private const string FILE_NAME_XML_SETTINGS = "Settings_SSL.xml";
         static void Main(string[] args)
         {
-            Console.WriteLine("Documents Folder {0}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            Console.ReadLine();
+            string documentsfolder = string.Empty;
+            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS))
+                CreateSSLSettings();
 
-            CreateSSLSettings();
+            GetSettings();
+            Console.ReadLine();
         }
 
         static void CreateSSLSettings()
@@ -44,31 +47,43 @@ namespace CreateXmlSettingsFiles
                     new XElement("Xmlfilename", "SSL.xml")
                 );
 
-            Console.WriteLine("This Machine is {0}", Environment.MachineName);
-            Console.WriteLine();
+            SSLSettings.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS);
+            Console.WriteLine("Saved Xml file");
+            Console.Read();
+        }
 
+        static void GetSettings()
+        {
             string settingsfilepath = string.Empty;
-            foreach (XElement el in SSLSettings.Elements("Dev_Machine"))
+            XDocument SSLSettings=XDocument.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS,LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
+            Console.WriteLine("Xml file Settings_SSL {0}", SSLSettings.ToString());
+            Console.WriteLine("Element Count {0}",SSLSettings.Descendants().Count());
+            Console.WriteLine("Desendants - 'Dev_Machine' Count {0}",SSLSettings.Descendants("Dev_Machine").Count());
+            Console.WriteLine("Desendants Nodes Count {0}",SSLSettings.DescendantNodes().Count());
+            Console.ReadLine();
+
+            foreach (var item in SSLSettings.Descendants())
+            {
+                Console.WriteLine("Elements {0}", item.ToString());
+            }
+            Console.ReadLine();
+            
+            // Using Linq
+            Console.WriteLine("{0}", Environment.MachineName.ToString());
+            var dev_machine = from el in SSLSettings.Descendants("Dev_Machine")
+                              where el.Attribute("Machine_Name").Value == Environment.MachineName.ToString()
+                              select el;
+
+            foreach (XElement el in SSLSettings.Descendants("Dev_Machine"))
             {
                 Console.WriteLine("Looking at Machine: {0}", el.Attribute("Machine_Name").Value);
                 if (el.Attribute("Machine_Name").Value.ToLower() == Environment.MachineName.ToLower())
                 {
-                    settingsfilepath = el.Element("XmlPath").Value + SSLSettings.Element("Xmlfilename").Value;
-                    Console.WriteLine("This Element Value is {0}",el.Value);
+                    settingsfilepath = el.Value;
+                    Console.WriteLine("This Element Value is {0}", el.Value);
                 }
             }
 
-            // Using Linq
-            Console.WriteLine("{0}", Environment.MachineName.ToString());
-            var dev_machine = from el in SSLSettings.Elements("Dev_Machine")
-                                                where el.Attribute("Machine_Name").Value == Environment.MachineName.ToString()
-                                                select el;
-
-
-            //SSLSettings.Save(dev_machine.Element("DocumentPath").Value + dev_machine.Element("DocumentName"));
-
-            Console.WriteLine("Saved Xml file");
-            Console.Read();
         }
     }
 }
