@@ -64,6 +64,8 @@ namespace CreateXmlSettingsFiles
                 if (el.Attribute("Machine_Name").Value.ToLower() == Environment.MachineName.ToLower())
                 {
                     Console.WriteLine("Looking at Machine: {0}", el.Attribute("Machine_Name").Value);
+                    Console.WriteLine("{0}",el.Element("XmlPath").Value);
+
                     settingsfilepath = el.Element("XmlPath").Value;
                     Console.WriteLine("Path for Xml: {0}", settingsfilepath);
                 }
