@@ -55,7 +55,7 @@ namespace CreateXmlSettingsFiles
         static void GetSettings()
         {
             string settingsfilepath = string.Empty;
-            XElement SSLSettings = XElement.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS,LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
+            XElement SSLSettings = XElement.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + FILE_NAME_XML_SETTINGS);
             // Using Linq
             Console.WriteLine("{0}", Environment.MachineName.ToString());
             var dev_machine = from el in SSLSettings.Elements("Dev_Machine")
@@ -64,11 +64,11 @@ namespace CreateXmlSettingsFiles
 
             foreach (XElement el in SSLSettings.Elements("Dev_Machine"))
             {
-                Console.WriteLine("Looking at Machine: {0}", el.Attribute("Machine_Name").Value);
                 if (el.Attribute("Machine_Name").Value.ToLower() == Environment.MachineName.ToLower())
                 {
+                    Console.WriteLine("Looking at Machine: {0}", el.Attribute("Machine_Name").Value);
                     settingsfilepath = el.Element("XmlPath").Value;
-                    Console.WriteLine("This Element Value is {0}", settingsfilepath);
+                    Console.WriteLine("Path for Xml: {0}", settingsfilepath);
                 }
             }
 
